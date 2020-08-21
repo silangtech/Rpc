@@ -1,0 +1,26 @@
+{
+    "name": "silangtech/rpc",
+    "description" : "服务类应用",
+    "type": "application",
+    "keywords": ["SilangPHP","Server","rpc","php framework"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "shengsheng",
+            "email": "9448923@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
+    },
+    "_comment": "SilangPHP/Rpc",
+    "autoload": {
+        "psr-4": {
+            "SilangPHP\\Rpc\\": "src/",
+            "test\\": "test/"
+        }
+    }
+}
