@@ -34,13 +34,19 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
 
     public $service = [];
 
-    public function __construct()
+    public function __construct($serverName = '')
     {
+        $this->processName .= $serverName;
         parent::__construct($this->host,$this->port,SWOOLE_PROCESS,SWOOLE_SOCK_TCP);
     }
 
+    /**
+     * server配置
+     */
     public function config()
     {
+        $this->pid_file = $this->tmp_path.'server'.$this->port.'.pid';
+        $this->log_file = $this->tmp_path.'swoole'.$this->port.'.log';
         $this->set([
             'worker_num' => $this->worker_num,
             'user' => $this->user,
@@ -48,8 +54,8 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
             'daemonize' => $this->daemonize,
             'backlog' => $this->backlog,
             'task_worker_num' => $this->task_worker_num,
-            'pid_file' => $this->tmp_path.'server.pid', //设置pid file 结束的时候就比较好处理了
-            'log_file' => $this->tmp_path.'swoole9501.log'
+            'pid_file' => $this->pid_file,
+            'log_file' => $this->log_file
         ]);
     }
 
@@ -90,16 +96,36 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
     }
 
     /**
+     * 停止服务
+     */
+    public function stop()
+    {
+        // 获取pid,然后清空pid
+        $pid = file_get_contents($this->pid_file);
+        if($pid)
+        {
+            \Swoole\Process::kill((int)$pid, SIGTERM);
+        }
+        $pid = file_put_contents($this->pid_file,"");
+        echo '停止成功';
+    }
+
+    /**
+     * 重新启动服务
+     */
+    public function restart()
+    {
+        $this->stop();
+        $this->run();
+    }
+
+    /**
      * 开始进程
      * @param \Swoole\Server $server
      */
     public function onStart(\Swoole\Server $server)
     {
         swoole_set_process_name($this->processName);
-        $this->task("test");
-        $this->task("test2");
-        $this->task("test3");
-
     }
 
     public function onShutdown(\swoole_server $server)
