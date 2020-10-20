@@ -17,6 +17,7 @@ namespace SilangPHP\Rpc;
 
 class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
 {
+    public $serv = null;
     public $worker_num = 2;
     public $user = 'www-data';
     public $group = 'www-data';
@@ -36,8 +37,15 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
 
     public function __construct($serverName = '')
     {
+        if(defined("PS_RUNTIME_PATH"))
+        {
+            $this->tmp_path = PS_RUNTIME_PATH;
+        }else{
+            $this->tmp_path = "/tmp/";
+        }
+        $this->pid_file = $this->tmp_path.'server'.$this->port.'.pid';
+        $this->log_file = $this->tmp_path.'swoole'.$this->port.'.log';
         $this->processName .= $serverName;
-        parent::__construct($this->host,$this->port,SWOOLE_PROCESS,SWOOLE_SOCK_TCP);
     }
 
     /**
@@ -45,8 +53,7 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
      */
     public function config()
     {
-        $this->pid_file = $this->tmp_path.'server'.$this->port.'.pid';
-        $this->log_file = $this->tmp_path.'swoole'.$this->port.'.log';
+        parent::__construct($this->host,$this->port,SWOOLE_PROCESS,SWOOLE_SOCK_TCP);
         $this->set([
             'worker_num' => $this->worker_num,
             'user' => $this->user,
@@ -98,24 +105,25 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
     /**
      * 停止服务
      */
-    public function stop()
+    public function stoppid()
     {
         // 获取pid,然后清空pid
+        echo "[server_pid]".$this->pid_file.PHP_EOL;
         $pid = file_get_contents($this->pid_file);
         if($pid)
         {
             \Swoole\Process::kill((int)$pid, SIGTERM);
         }
         $pid = file_put_contents($this->pid_file,"");
-        echo '停止成功';
+        echo '停止成功'.PHP_EOL;
     }
 
     /**
      * 重新启动服务
      */
-    public function restart()
+    public function restartpid()
     {
-        $this->stop();
+        $this->stoppid();
         $this->run();
     }
 
