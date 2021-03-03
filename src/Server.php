@@ -136,11 +136,11 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
         swoole_set_process_name($this->processName);
     }
 
-    public function onShutdown(\swoole_server $server)
+    public function onShutdown(\Swoole\Server $server)
     {
     }
 
-    public function onWorkerStart(\swoole_server $server, $worker_id)
+    public function onWorkerStart(\Swoole\Server $server, $worker_id)
     {
         if($worker_id >= $server->setting['worker_num']) {
             swoole_set_process_name($this->processName."_taskworker");
@@ -149,37 +149,37 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
         }
     }
 
-    public function onWorkerError(\swoole_server $serv, $worker_id, $worker_pid, $exit_code, $signal)
+    public function onWorkerError(\Swoole\Server $serv, $worker_id, $worker_pid, $exit_code, $signal)
     {
     }
 
-    public function onWorkerStop(\swoole_server $server, $worker_id)
+    public function onWorkerStop(\Swoole\Server $server, $worker_id)
     {
     }
 
-    public function onManagerStart(\swoole_server $serv)
+    public function onManagerStart(\Swoole\Server $serv)
     {
     }
 
-    public function onManagerStop(\swoole_server $serv)
+    public function onManagerStop(\Swoole\Server $serv)
     {
     }
 
-    public function onTask(\swoole_server $serv, $task_id, $from_id, $data)
+    public function onTask(\Swoole\Server $serv, $task_id, $from_id, $data)
     {
         // 获取到数据的一个处理
     }
 
-    public function onFinish(\swoole_server $serv, $task_id, $data)
+    public function onFinish(\Swoole\Server $serv, $task_id, $data)
     {
 
     }
 
-    public function onClose(\swoole_server $server, $fd, $reactorId)
+    public function onClose(\Swoole\Server $server, $fd, $reactorId)
     {
     }
 
-    public function onConnect(\swoole_server $server, $fd, $from_id)
+    public function onConnect(\Swoole\Server $server, $fd, $from_id)
     {
     }
 
@@ -195,7 +195,7 @@ class Server extends \Swoole\Server implements \SilangPHP\Rpc\Base
      * @param $reactor_id
      * @param $data
      */
-    public function onReceive(\swoole_server $server, $fd, $reactor_id, $data)
+    public function onReceive(\Swoole\Server $server, $fd, $reactor_id, $data)
     {
         // 根据信息，处理完之后返回
         // 获取到数据后的一个处理
